@@ -4,32 +4,23 @@ using UnityEngine;
 
 public class Trampoline : MonoBehaviour {
 
-    public ParticleSystem pSystem;
-    public GameManager scoreScript;
+  // CHANGES
+  // 1. GameManager reference added to remove script acquirement from the Update method
+  // 2. ParticleSystem reference added to remove the acquirement from the Update method
+  // 3. Update and Start methods completely removed
+  // 4. Debug log information removed
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        scoreScript = GameObject.Find("GameManager").GetComponent<GameManager>();
-        pSystem = GetComponentInChildren<ParticleSystem>();
+  public ParticleSystem pSystem;
+  public GameManager scoreScript;
 
-	}
-
-    void OnCollisionEnter(Collision col)
+  void OnCollisionEnter(Collision col)
+  {
+    if (col.gameObject.CompareTag("Throwable"))
     {
-        if (col.gameObject.CompareTag("Throwable"))
-        {
-            //Score Point
-            scoreScript.score++;
-            //Particle effect
-            pSystem.Play();
-
-            //Debug.Log("Trampoline Hit");
-        }
-
+        //Score Point
+        scoreScript.score++;
+        //Particle effect
+        pSystem.Play();
     }
+  }
 }
