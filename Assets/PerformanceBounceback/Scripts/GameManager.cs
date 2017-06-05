@@ -4,5 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-    public int score;
+  // CHANGES
+  // Start and Update methods completely removed
+
+  public int score;
 }

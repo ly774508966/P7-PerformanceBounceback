@@ -4,47 +4,45 @@ using UnityEngine;
 
 public class Throw : MonoBehaviour
 {
+  private SteamVR_TrackedObject trackedObj;
+  private SteamVR_Controller.Device device;
+  public float throwForce = 2f;
 
-    private SteamVR_TrackedObject trackedObj;
-    private SteamVR_Controller.Device device;
-    public float throwForce = 2f;
+  // Use this for initialization
+  void Start()
+  {
+    trackedObj = GetComponent<SteamVR_TrackedObject>();
+  }
 
-    // Use this for initialization
-    void Start()
+  void OnTriggerStay(Collider col)
+  {
+    // CHANGES
+    // 1. Device by index acquirement to OnTriggerStay method moved. The device gets only
+    // acquired if the controller touches the collider of the ball 
+    // 2. Update method removed completely
+    // 3. Debug log removed
+
+    if (col.gameObject.CompareTag("Throwable"))
     {
-        trackedObj = GetComponent<SteamVR_TrackedObject>();
+      device = SteamVR_Controller.Input((int)trackedObj.index);
+
+      if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+      {
+        //Multi Throwing
+        col.transform.SetParent(null);
+        Rigidbody rigidBody = col.GetComponent<Rigidbody>();
+        rigidBody.isKinematic = false;
+
+        rigidBody.velocity = device.velocity * throwForce;
+        rigidBody.angularVelocity = device.angularVelocity;
+      }
+      else if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+      {
+        col.GetComponent<Rigidbody>().isKinematic = true;
+        col.transform.SetParent(gameObject.transform);
+
+        device.TriggerHapticPulse(2000);
+      }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        device = SteamVR_Controller.Input((int)trackedObj.index);
-    }
-
-    void OnTriggerStay(Collider col)
-    {
-        if (col.gameObject.CompareTag("Throwable"))
-        {
-            if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
-            {
-                //Debug.Log("You have released the trigger");
-
-                //Multi Throwing
-                col.transform.SetParent(null);
-                Rigidbody rigidBody = col.GetComponent<Rigidbody>();
-                rigidBody.isKinematic = false;
-
-                rigidBody.velocity = device.velocity * throwForce;
-                rigidBody.angularVelocity = device.angularVelocity;
-            }
-            else if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
-            {
-                //Debug.Log("You are touching down the trigger on an object");
-                col.GetComponent<Rigidbody>().isKinematic = true;
-                col.transform.SetParent(gameObject.transform);
-
-                device.TriggerHapticPulse(2000);
-            }
-        }
-    }
+  }
 }
