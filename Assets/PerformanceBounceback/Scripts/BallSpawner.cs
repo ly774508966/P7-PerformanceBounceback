@@ -21,7 +21,7 @@ public class BallSpawner : MonoBehaviour {
 
   void Start()
   {
-    //Create Bullet Pool
+    //Create Ball Pool
     pooledBalls = new List<GameObject>();
     for (int i = 0; i < ballsAmount; i++)
     {
@@ -34,19 +34,17 @@ public class BallSpawner : MonoBehaviour {
   public GameObject GetPooledBall()
   {
     ballPoolNum++;
+    // If the current ball is the last one in the pool, than the pointer gets reset to the
+    // first one.
     if (ballPoolNum > (ballsAmount - 1))
     {
       ballPoolNum = 0;
     }
-    //if we’ve run out of objects in the pool too quickly, create a new one
-    if (pooledBalls[ballPoolNum].activeInHierarchy)
-    {
-      //create a new bullet and add it to the bulletList
-      GameObject obj = Instantiate(pooledBall);
-      pooledBalls.Add(obj);
-      ballsAmount++;
-      ballPoolNum = ballsAmount - 1;
-    }
+
+    // CHANGES
+    // Code to instantiate additional balls removed. Doing so lets us recycle the balls
+    // in the pool and express the illusion that the balls getting spawned further.
+
     return pooledBalls[ballPoolNum];
   }
    	
